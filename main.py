@@ -1,6 +1,23 @@
-import logging
+from telegram.ext import Updater, InlineQueryHandler, CommandHandler
+import requests
+import re
 
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+def get_url():
+    contents = requests.get('https://random.dog/woof.json').json()    
+    url = contents['url']
+    return url
 
-def start(update, context):
-    update.message.reply_text('Hi!')
+def bop(bot, update):
+    url = get_url()
+    chat_id = update.message.chat_id
+    bot.send_photo(chat_id=chat_id, photo=url)
+
+def main():
+    updater = Updater('1892703816:AAEbh22Pcj1jO2naGdpNNXW-pLFarC_1jis')
+    dp = updater.dispatcher
+    dp.add_handler(CommandHandler('bop',bop))
+    updater.start_polling()
+    updater.idle()
+
+if __name__ == '__main__':
+    main()
